@@ -123,6 +123,8 @@ namespace AlLib
 					m_nCapacity = arrElements_.m_nCapacity;
 					std::uninitialized_copy_n(arrElements_.m_pSource, arrElements_.m_nSize, m_pSource);
 				}
+
+				return *this;
 			}
 
 			template<typename T>
