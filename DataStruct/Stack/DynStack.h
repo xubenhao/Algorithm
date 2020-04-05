@@ -85,7 +85,7 @@ namespace AlLib
 			template <typename T>
 			void DynStack<T>::Reset()
 			{
-				m_arrValues.R
+				m_arrValues.Reset();
 			}
 
 			template <typename T>
