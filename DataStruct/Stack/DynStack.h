@@ -91,7 +91,7 @@ namespace AlLib
 			template <typename T>
 			T DynStack<T>::Peek(unsigned int nReverseIndex_) const
 			{
-				if (m_arrValues.GetSize() < (nReverseIndex_ + 1))
+				if ((unsigned int)m_arrValues.GetSize() < (nReverseIndex_ + 1))
 				{
 					throw "out of size";
 				}
