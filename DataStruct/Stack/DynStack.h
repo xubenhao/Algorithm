@@ -21,7 +21,7 @@ namespace AlLib
 				DynStack();
 				DynStack(const DynStack& sA_);
 				DynStack operator=(const DynStack& sA_);
-				~DynStack();
+				virtual ~DynStack();
 
 				void Push(const T& nNewValue_);
 				T Pop();

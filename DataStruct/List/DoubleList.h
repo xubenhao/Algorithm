@@ -53,7 +53,7 @@ namespace AlLib
 				DoubleList(const DoubleList& list_);
 				// ¸³Öµ
 				DoubleList<T>& operator=(const DoubleList& list_);
-				~DoubleList();
+				virtual ~DoubleList();
 
 				// ÅÐ¿Õ
 				bool IsEmpty() const;

@@ -23,7 +23,7 @@ namespace AlLib
 			public:
 				DynArray();
 				DynArray(int nInitialSize_, const T& nInitialValue_);
-				~DynArray();
+				virtual ~DynArray();
 
 				void Add(const T& value_);
 				void AddRange(const DynArray& arrItems_);
