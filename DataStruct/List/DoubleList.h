@@ -156,6 +156,8 @@ namespace AlLib
 					_pCur = _pCur->m_pNext;
 					Add(_pTemp->GetValue());
 				}
+
+				return *this;
 			}
 
 			template<typename T>
