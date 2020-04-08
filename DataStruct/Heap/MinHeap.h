@@ -35,9 +35,9 @@ namespace AlLib
 				void Add(const T& nT_);
 				void Delete(int nIndex_);
 				void Set(int nIndex_, const T& nV_);
-				T Get(int nIndex_);
-				int Find(std::function<bool(const T& nT_)> fun_);
-				int GetSize();
+				T Get(int nIndex_) const;
+				int Find(std::function<bool(const T& nT_)> fun_) const;
+				int GetSize() const;
 			private:
 				void BuildHeap(const Array::DynArray<T>& arrElements_);
 				void Adjust(int nIndex_);
@@ -197,7 +197,7 @@ namespace AlLib
 				// 新元素索引
 				if ((_nSize + 1) % 2 == 0)
 				{
-					T _nPV = m_arrElements[(_nSize + 1) % 2];
+					T _nPV = m_arrElements[(_nSize + 1) / 2];
 					m_arrElements.Add(_nPV);// 添加元素取其父亲值
 				}
 				else
@@ -354,13 +354,13 @@ namespace AlLib
 			}
 
 			template <typename T>
-			T MinHeap<T>::Get(int nIndex_)
+			T MinHeap<T>::Get(int nIndex_) const
 			{
 				return m_arrElements[nIndex_];
 			}
 
 			template <typename T>
-			int MinHeap<T>::Find(std::function<bool(const T& nT_)> fun_)
+			int MinHeap<T>::Find(std::function<bool(const T& nT_)> fun_) const
 			{
 				int _nSize = m_arrElements.GetSize();
 				for (int _i = 1; _i < _nSize; _i++)
@@ -375,7 +375,7 @@ namespace AlLib
 			}
 
 			template <typename T>
-			int MinHeap<T>::GetSize()
+			int MinHeap<T>::GetSize() const
 			{
 				return m_arrElements.GetSize();
 			}
