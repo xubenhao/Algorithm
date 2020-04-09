@@ -22,7 +22,7 @@ namespace AlLib
 				virtual ~MinPriorityQueue();
 
 				MinPriorityQueue(const MinPriorityQueue& dqA_);
-				MinPriorityQueue operator=(const MinPriorityQueue& dqA_);
+				MinPriorityQueue& operator=(const MinPriorityQueue& dqA_);
 
 				void In(const T& nValue_);
 				T Out();
@@ -53,7 +53,7 @@ namespace AlLib
 			}
 
 			template <typename T>
-			typename MinPriorityQueue<T> MinPriorityQueue<T>::operator=(const MinPriorityQueue& mpqA_)
+			typename MinPriorityQueue<T>& MinPriorityQueue<T>::operator=(const MinPriorityQueue& mpqA_)
 			{
 				if (this == &mpqA_)
 				{

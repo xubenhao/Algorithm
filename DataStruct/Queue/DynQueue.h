@@ -22,7 +22,7 @@ namespace AlLib
 				virtual ~DynQueue();
 
 				DynQueue(const DynQueue& dqA_);
-				DynQueue operator=(const DynQueue& dqA_);
+				DynQueue& operator=(const DynQueue& dqA_);
 
 				void In(const T& nValue_);
 				T Out();
@@ -53,7 +53,7 @@ namespace AlLib
 			}
 
 			template <typename T>
-			typename DynQueue<T> DynQueue<T>::operator=(const DynQueue& dqA_)
+			typename DynQueue<T>& DynQueue<T>::operator=(const DynQueue& dqA_)
 			{
 				if (this == &dqA_)
 				{

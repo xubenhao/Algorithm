@@ -30,7 +30,7 @@ namespace AlLib
 				MinHeap(const Array::DynArray<T>& arrElements_);
 				~MinHeap();
 				MinHeap(const MinHeap& mhA_);
-				MinHeap operator=(const MinHeap& mhA_);
+				MinHeap& operator=(const MinHeap& mhA_);
 
 				void Add(const T& nT_);
 				void Delete(int nIndex_);
@@ -71,7 +71,7 @@ namespace AlLib
 			}
 
 			template <typename T>
-			typename MinHeap<T> MinHeap<T>::operator=(const MinHeap& mhA_)
+			typename MinHeap<T>& MinHeap<T>::operator=(const MinHeap& mhA_)
 			{
 				if (this == &mhA_)
 				{

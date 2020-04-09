@@ -20,7 +20,7 @@ namespace AlLib
 			public:
 				DynStack();
 				DynStack(const DynStack& sA_);
-				DynStack operator=(const DynStack& sA_);
+				DynStack& operator=(const DynStack& sA_);
 				virtual ~DynStack();
 
 				void Push(const T& nNewValue_);
@@ -50,7 +50,7 @@ namespace AlLib
 			}
 			
 			template <typename T>
-			typename DynStack<T> DynStack<T>::operator=(const DynStack& sA_)
+			typename DynStack<T>& DynStack<T>::operator=(const DynStack& sA_)
 			{
 				m_arrValues = sA_.m_arrValues;
 				return *this;
