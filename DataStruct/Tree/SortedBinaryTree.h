@@ -70,6 +70,14 @@ namespace AlLib
 						m_pRightChild = nullptr;
 					}
 
+					Node(const Pair& nPair_)
+					{
+						m_nPair = nPair_;
+						m_pParent = nullptr;
+						m_pLeftChild = nullptr;
+						m_pRightChild = nullptr;
+					}
+
 					~Node()
 					{
 					}
@@ -116,6 +124,9 @@ namespace AlLib
 					return _arrContain;
 				}
 
+				/*void DeleteEx(const Key& key_, Node* pRoot_ = nullptr);*/
+			private:
+				void Delete(Node* pNode_);
 			private:
 				Node* m_pRoot;
 			};
@@ -415,6 +426,92 @@ namespace AlLib
 					return;
 				}
 
+				Delete(_pNode);
+			}
+
+			template<typename Key, typename Value>
+			void SortedBinaryTree<Key, Value>::Delete(Node* pNode_)
+			{
+				Node* _pNode = pNode_;
+				if (_pNode == nullptr)
+				{
+					throw "input error";
+				}
+
+				if (_pNode->m_pLeftChild == nullptr
+					&& _pNode->m_pRightChild == nullptr)
+				{
+					if (_pNode->m_pParent == nullptr)
+					{
+						delete _pNode;
+						_pNode = nullptr;
+						m_pRoot = nullptr;
+						return;
+					}
+
+					if (_pNode->m_pParent->m_pLeftChild == _pNode)
+					{
+						_pNode->m_pParent->m_pLeftChild = nullptr;
+						delete _pNode;
+						_pNode = nullptr;
+						return;
+					}
+					else
+					{
+						_pNode->m_pParent->m_pRightChild = nullptr;
+						delete _pNode;
+						_pNode = nullptr;
+						return;
+					}
+				}
+				else if (_pNode->m_pLeftChild != nullptr
+					&& _pNode->m_pRightChild == nullptr)
+				{
+					Node *_pMovingNode = Max(_pNode->m_pLeftChild);
+					_pNode->m_nPair = _pMovingNode->m_nPair;
+					Delete(_pMovingNode);
+				}
+				else if (_pNode->m_pLeftChild == nullptr
+					&& _pNode->m_pRightChild != nullptr)
+				{
+					Node *_pMovingNode = Min(_pNode->m_pRightChild);
+					_pNode->m_nPair = _pMovingNode->m_nPair;
+					Delete(_pMovingNode);
+				}
+				else
+				{
+					Node *_pMovingNode = Max(_pNode->m_pLeftChild);
+					_pNode->m_nPair = _pMovingNode->m_nPair;
+					Delete(_pMovingNode);
+				}
+
+				return;
+			}
+
+			/*template<typename Key, typename Value>
+			void SortedBinaryTree<Key, Value>::Delete(const Key& key_, Node* pRoot_)
+			{
+				Node *_pRoot = nullptr;
+				if (pRoot_ == nullptr)
+				{
+					_pRoot = m_pRoot;
+				}
+				else
+				{
+					_pRoot = pRoot_;
+				}
+
+				if (_pRoot == nullptr)
+				{
+					return;
+				}
+
+				Node* _pNode = Search(key_, _pRoot);
+				if (_pNode == nullptr)
+				{
+					return;
+				}
+
 				if (_pNode->m_pLeftChild == nullptr
 					&& _pNode->m_pRightChild == nullptr)
 				{
@@ -463,7 +560,7 @@ namespace AlLib
 				}
 
 				return;
-			}
+			}*/
 
 			template<typename Key, typename Value>
 			void SortedBinaryTree<Key, Value>::DeleteAll()
