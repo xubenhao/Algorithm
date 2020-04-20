@@ -106,7 +106,7 @@ namespace AlLib
 					EdgeIdentity()
 					{
 					}
-
+					
 					EdgeIdentity(const Key& nS_,
 						const Key& nE_)
 					{
@@ -125,13 +125,6 @@ namespace AlLib
 						_nIndentity.m_nStartKey = m_nEndKey;
 						_nIndentity.m_nEndKey = m_nStartKey;
 						return _nIndentity;
-					}
-
-					void Reverse()
-					{
-						Key _nKey = m_nStartKey;
-						m_nStartKey = m_nEndKey;
-						m_nEndKey = _nKey;
 					}
 
 					// 键值比较唯一性的标准定义：
@@ -228,12 +221,12 @@ namespace AlLib
 				};
 
 			public:
-				typedef Tree::SortedBalanceBinaryTree<Key, Node*> NodeTree;
-				typedef Tree::SortedBalanceBinaryTree<Key, Node*>::Node NodeTreeNode;
-				typedef Tree::SortedBalanceBinaryTree<Key, Node*>::Pair NodeTreePair;
-				typedef Tree::SortedBalanceBinaryTree<EdgeIdentity, Edge*> EdgeTree;
-				typedef Tree::SortedBalanceBinaryTree<EdgeIdentity, Edge*>::Node EdgeTreeNode;
-				typedef Tree::SortedBalanceBinaryTree<EdgeIdentity, Edge*>::Pair EdgeTreePair;
+				typename typedef  Tree::SortedBalanceBinaryTree<Key, Node*> NodeTree;
+				typename typedef NodeTree::Node NodeTreeNode;
+				typename typedef NodeTree::Pair NodeTreePair;
+				typename typedef  Tree::SortedBalanceBinaryTree<EdgeIdentity, Edge*> EdgeTree;
+				typename typedef EdgeTree::Node EdgeTreeNode;
+				typename typedef EdgeTree::Pair EdgeTreePair;
 
 				Graph();
 				~Graph();
@@ -390,7 +383,7 @@ namespace AlLib
 					return false;
 				}
 
-				NodeTreeNode _nNodeTreePair;
+				NodeTreePair _nNodeTreePair;
 				_nNodeTreePair.m_nKey = nPair_.m_nKey;
 				Node* _pNode = nullptr;
 				try
