@@ -50,14 +50,30 @@ namespace AlLib
 						return m_nPair;
 					}
 
-					Tree::SortedBalanceBinaryTree<Key, Key> GetDests()
+					Array::DynArray<Key> GetDests()
 					{
-						return m_sbbtDests;
+						Array::DynArray<Tree::SortedBalanceBinaryTree<Key,Key>::Pair> _arrPairs = m_sbbtDests.GetArray();
+						Array::DynArray<Key> _arrKeys;
+						int _nSize = _arrPairs.GetSize();
+						for (int _i = 0; _i < _nSize; _i++)
+						{
+							_arrKeys.Add(_arrPairs[_i].m_nKey);
+						}
+
+						return _arrKeys;
 					}
 
-					Tree::SortedBalanceBinaryTree<Key, Key> GetSours()
+					Array::DynArray<Key> GetSours()
 					{
-						return m_sbbtSours;
+						Array::DynArray<Tree::SortedBalanceBinaryTree<Key, Key>::Pair> _arrPairs = m_sbbtSours.GetArray();
+						Array::DynArray<Key> _arrKeys;
+						int _nSize = _arrPairs.GetSize();
+						for (int _i = 0; _i < _nSize; _i++)
+						{
+							_arrKeys.Add(_arrPairs[_i].m_nKey);
+						}
+
+						return _arrKeys;
 					}
 				private:
 					Node(const Pair& nPair_)
@@ -238,8 +254,7 @@ namespace AlLib
 				{
 					Array::DynArray<NodeTreePair> _arrPairs = m_NodesTree.GetArray();
 					Array::DynArray<Node*> _arrNodes;
-					int _nNodeSize = _arrPairs.GetSize();
-					for (int _i = 0; _i < _nNodeSize; _i++)
+					for (int _i = 0; _i < _arrPairs.GetSize(); _i++)
 					{
 						_arrNodes.Add(_arrPairs[_i].m_nValue);
 					}
@@ -416,20 +431,16 @@ namespace AlLib
 					return;
 				}
 
-				Tree::SortedBalanceBinaryTree<Key, Key> _sbbtDests = _pNode->GetDests();
-				Tree::SortedBalanceBinaryTree<Key, Key>::Node* _pDestsNode = _sbbtDests.Min();
-				while (_pDestsNode)
+				DataStruct::Array::DynArray<Key> _arrKeys = _pNode->GetDests();
+				for (int _i = 0; _i < _arrKeys.GetSize(); _i++)
 				{
-					DeleteEdge(EdgeIdentity(nKey_, _pDestsNode->GetPair().m_nKey));
-					_pDestsNode = _sbbtDests.Suc(_pDestsNode);
+					DeleteEdge(EdgeIdentity(nKey_, _arrKeys[_i]));
 				}
-
-				Tree::SortedBalanceBinaryTree<Key, Key> _sbbtSours = _pNode->GetSours();
-				Tree::SortedBalanceBinaryTree<Key, Key>::Node* _pSoursNode = _sbbtSours.Min();
-				while (_pSoursNode)
+				
+				_arrKeys = _pNode->GetSours();
+				for (int _i = 0; _i < _arrKeys.GetSize(); _i++)
 				{
-					DeleteEdge(EdgeIdentity(_pSoursNode->GetPair().m_nKey, nKey_));
-					_pSoursNode = _sbbtSours.Suc(_pSoursNode);
+					DeleteEdge(EdgeIdentity(_arrKeys[_i], nKey_));
 				}
 				
 				m_NodesTree.Delete(nKey_);
