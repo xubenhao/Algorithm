@@ -97,6 +97,7 @@ namespace AlLib
 				~DepthFirstVisit();
 
 				DataStruct::Array::DynArray<Node*> Run();
+				DataStruct::Array::DynArray<Node*> Run(const DataStruct::Array::DynArray<Key>& arrKeys_);
 			private:
 				DepthFirstVisit(const DepthFirstVisit& nDFV_) = default;
 				DepthFirstVisit& operator=(const DepthFirstVisit& nDFV_) = default;
@@ -164,6 +165,39 @@ namespace AlLib
 				for (int _i = 0; _i < _arrTreePairs.GetSize(); _i++)
 				{
 					Node* _pNode = _arrTreePairs[_i].m_nValue;
+					if (_pNode->m_nState == State::UnVisit)
+					{
+						Visit(_pNode, _nTime);
+					}
+				}
+
+				return _arrpNodes;
+			}
+
+			template<typename Key, typename Value>
+			DataStruct::Array::DynArray<typename DepthFirstVisit<Key, Value>::Node*> DepthFirstVisit<Key, Value>::Run(const DataStruct::Array::DynArray<Key>& arrKeys_)
+			{
+				DataStruct::Array::DynArray<Node*> _arrpNodes;
+				DataStruct::Array::DynArray<InnerTree::Pair>_arrTreePairs = m_nNodeMappingTree.GetArray();
+				for (int _i = 0; _i < _arrTreePairs.GetSize(); _i++)
+				{
+					_arrpNodes.Add(_arrTreePairs[_i].m_nValue);
+					_arrpNodes[_i]->Reset();
+				}
+
+				int _nTime = 0;
+				// 对于图中所有节点执行迭代处理
+				for (int _i = 0; _i < arrKeys_.GetSize(); _i++)
+				{
+					InnerTree::Node* _pTreeNode = m_nNodeMappingTree.Search(arrKeys_[_i]);
+					if (_pTreeNode == nullptr
+						|| _pTreeNode->GetPair().m_nValue == nullptr)
+					{
+						throw "some key cannot relating to graph node";
+					}
+
+					Node* _pNode = _pTreeNode->GetPair().m_nValue;
+					// 未访问节点才执行迭代处理
 					if (_pNode->m_nState == State::UnVisit)
 					{
 						Visit(_pNode, _nTime);
