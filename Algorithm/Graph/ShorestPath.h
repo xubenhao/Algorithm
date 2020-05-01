@@ -78,7 +78,7 @@ namespace AlLib
 
 				DataStruct::Array::DynArray<Node*> Run(const Key& nSourceKey_);
 				DataStruct::Array::DynArray<Node*> RunForWeightNoNegtive(const Key& nSourceKey_);
-				/*DataStruct::Array::DynArray<Node*> RunForNoCircle(const Key& nSourceKey_);*/
+				DataStruct::Array::DynArray<Node*> RunForNoCircle(const Key& nSourceKey_);
 			private:
 				ShorestPath(const ShorestPath&) = default;
 				ShorestPath& operator=(const ShorestPath&) = default;
@@ -295,6 +295,87 @@ namespace AlLib
 				}
 
 				return _arrpRetNodes;
+			}
+
+			template<typename Key, typename Value>
+			DataStruct::Array::DynArray<typename ShorestPath<Key, Value>::Node*> ShorestPath<Key, Value>::RunForNoCircle(const Key& nSourceKey_)
+			{
+				InnerGraph::Node* _pSourceNode = m_nGraph.SearchNode(nSourceKey_);
+				if (_pSourceNode == nullptr)
+				{
+					throw "can not find key in graph";
+				}
+
+				DataStruct::Array::DynArray<Node*> _arrpNodes;
+				DataStruct::Array::DynArray<InnerTree::Pair>_arrTreePairs = m_nNodeMappingTree.GetArray();
+				for (int _i = 0; _i < _arrTreePairs.GetSize(); _i++)
+				{
+					_arrpNodes.Add(_arrTreePairs[_i].m_nValue);
+					_arrpNodes[_i]->Reset();
+				}
+
+				TopologySort<Key, Value> _alTopologySort(m_nGraph);
+				DataStruct::Array::DynArray<typename DepthFirstVisit<Key, Value>::Node*> _arrTempNodes = _alTopologySort.Run();
+				DataStruct::Array::DynArray<Key> _arrKeys;
+				for (int _i = 0; _i < _arrTempNodes.GetSize(); _i++)
+				{
+					InnerGraph::Node* _pNode = _arrTempNodes[_i]->GetGraphNode();
+					if (_pNode == nullptr)
+					{
+						throw "graph node not exist";
+					}
+
+					_arrKeys.Add(_pNode->GetPair().m_nKey);
+				}
+
+				// 对按拓扑排序处理的所有节点
+				for (int _i = 0; _i < _arrKeys.GetSize(); _i++)
+				{
+					int _nKey = _arrKeys[_i];
+					Node* _pNode = nullptr;
+					m_nNodeMappingTree.Search(_nKey, _pNode);
+					if (_pNode == nullptr)
+					{
+						throw "node not exist";
+					}
+
+					InnerGraph::Node* _pGraphNode = _pNode->m_pGraphNode;
+					DataStruct::Array::DynArray<Key> _arrDestKeys = _pGraphNode->GetDests();
+					// 依次处理每个节点所有可达节点
+					for (int _j = 0; _j < _arrDestKeys.GetSize(); _j++)
+					{
+						if (_pNode->m_pPreNode != nullptr
+							|| _pNode->m_pGraphNode == _pSourceNode)
+						{
+							Node* _pDestNode = nullptr;
+							m_nNodeMappingTree.Search(_arrDestKeys[_j], _pDestNode);
+							if (_pDestNode == nullptr)
+							{
+								throw "dest node not exist";
+							}
+
+							InnerGraph::EdgeIdentity _nIdentity;
+							_nIdentity.m_nStartKey = _pNode->m_pGraphNode->GetPair().m_nKey;
+							_nIdentity.m_nEndKey = _pDestNode->m_pGraphNode->GetPair().m_nKey;
+							InnerGraph::Edge* _pEdge = nullptr;
+							_pEdge = m_nGraph.SearchEdge(_nIdentity);
+							if (_pEdge == nullptr)
+							{
+								throw "edge not exist";
+							}
+
+							// 对可达节点进行松弛操作
+							if ((_pDestNode->m_pPreNode == nullptr && _pDestNode->m_pGraphNode != _pSourceNode)
+								|| (_pDestNode->m_nDistance > _pNode->m_nDistance + _pEdge->m_nWeight))
+							{
+								_pDestNode->m_pPreNode = _pNode;
+								_pDestNode->m_nDistance = _pNode->m_nDistance + _pEdge->m_nWeight;
+							}
+						}
+					}
+				}
+
+				return _arrpNodes;
 			}
 
 		}
