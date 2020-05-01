@@ -32,7 +32,7 @@ namespace AlLib
 						return m_pBfvPathNode;
 					}
 
-					typename DataStruct::GraphStruct::Graph<Key, Value>::Node* GetGraphNode()
+					typename InnerGraph::Node* GetGraphNode()
 					{
 						return m_pGraphNode;
 					}
@@ -119,12 +119,12 @@ namespace AlLib
 			template<typename Key, typename Value>
 			BreadthFirstVisit<Key, Value>::~BreadthFirstVisit()
 			{
-				DataStruct::Array::DynArray<InnerTree::Pair> _arrpNodes = m_tKeyToNodeMap.GetArray();
-				int _nSize = _arrpNodes.GetSize();
+				DataStruct::Array::DynArray<InnerTree::Pair> _arrPairs = m_tKeyToNodeMap.GetArray();
+				int _nSize = _arrPairs.GetSize();
 				for (int _i = 0; _i < _nSize; _i++)
 				{
-					delete _arrpNodes[_i].m_nValue;
-					_arrpNodes[_i].m_nValue = nullptr;
+					delete _arrPairs[_i].m_nValue;
+					_arrPairs[_i].m_nValue = nullptr;
 				}
 			}
 

@@ -214,14 +214,15 @@ namespace AlLib
 				private:
 					Edge()
 					{
-						
+						m_nWeight = 1.0;
+						m_nStream = 1.0;
 					}
 
 					Edge(const EdgeIdentity& nIdentity_)
 					{
 						m_nIdentity = nIdentity_;
-						m_nWeight = 0.0;
-						m_nStream = 0.0;
+						m_nWeight = 1.0;
+						m_nStream = 1.0;
 					}
 
 					~Edge()
