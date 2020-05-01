@@ -13,6 +13,18 @@ namespace AlLib
 {
 	namespace DataStruct
 	{
+		// 更好的设计
+		// 对Node
+		// 由NodePair和DestNodes，SourNodes构成
+		// NodePair来表示Node本身的键-值信息。
+		// DestNodes来表示Node所有可达Node集合。
+		// SourNodes来表示所有以此Node为目标Node集合。
+
+		// 对Edge
+		// 由EdgePair和StartNode, EndNode构成
+		// EdgePair来表示Edge本身的键-值信息
+		// StartNode来表示边的起点键值
+		// EndNode来表示边的终点键值
 		namespace GraphStruct
 		{
 			template<typename Key, typename Value>
@@ -331,6 +343,14 @@ namespace AlLib
 				for (int _i = 0; _i < _nEdgeSize; _i++)
 				{
 					AddEdge(_arrEdges[_i]->m_nIdentity);
+					Edge* _pEdge = SearchEdge(_arrEdges[_i]->m_nIdentity);
+					if (_pEdge == nullptr)
+					{
+						throw "unexpected error";
+					}
+
+					_pEdge->m_nWeight = _arrEdges[_i]->m_nWeight;
+					_pEdge->m_nStream = _arrEdges[_i]->m_nStream;
 				}
 			}
 
@@ -355,6 +375,14 @@ namespace AlLib
 				for (int _i = 0; _i < _nEdgeSize; _i++)
 				{
 					AddEdge(_arrEdges[_i]->m_nIdentity);
+					Edge* _pEdge = SearchEdge(_arrEdges[_i]->m_nIdentity);
+					if (_pEdge == nullptr)
+					{
+						throw "unexpected error";
+					}
+
+					_pEdge->m_nWeight = _arrEdges[_i]->m_nWeight;
+					_pEdge->m_nStream = _arrEdges[_i]->m_nStream;
 				}
 
 				return *this;
