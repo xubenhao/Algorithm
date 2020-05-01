@@ -85,6 +85,7 @@ namespace AlLib
 				~MinGenerateTree();
 
 				Tree* RunForNoDirectionAndConnectedGraph();
+				Tree* RunForNoDirectionAndConnectedGraph(const Key& nSourceKey_);
 			private:
 				MinGenerateTree(const MinGenerateTree&) = default;
 				MinGenerateTree& operator=(const MinGenerateTree&) = default;
@@ -258,142 +259,119 @@ namespace AlLib
 				return m_arrpTrees[0];
 			}
 
-			//template<typename Key, typename Value>
-			//typename MinGenerateTree<Key, Value>::Tree* MinGenerateTree<Key, Value>::RunForNoDirectionAndConnectedGraph(const Key& nSourceKey_)
-			//{
-			//	Tree* _pTree = nullptr;
-			//	DataStruct::Array::DynArray<Node*> _arrNodes;
-			//	// 指定一个起始的节点
-			//	InnerGraph::Node* _pSourceNode = nullptr;
-			//	_pSourceNode = m_nGraph.SearchNode(nSourceKey_);
-			//	if (_pSourceNode == nullptr)
-			//	{
-			//		throw "source node is not exist";
-			//	}
+			template<typename Key, typename Value>
+			typename MinGenerateTree<Key, Value>::Tree* MinGenerateTree<Key, Value>::RunForNoDirectionAndConnectedGraph(const Key& nSourceKey_)
+			{
+				InnerGraph::Node* _pSourceNode = nullptr;
+				_pSourceNode = m_nGraph.SearchNode(nSourceKey_);
+				if (_pSourceNode == nullptr)
+				{
+					throw "source node is not exist";
+				}
 
-			//	DataStruct::Array::DynArray<typename InnerGraph::Node*> _arrGraphNodes = m_nGraph.GetNodesArray();
-			//	InnerTree _nNodeMappingTree;
-			//	// 以此节点构造一棵树。开始时，这颗树是最小生成树的一个子集。
-			//	for (int _i = 0; _i < _arrGraphNodes.GetSize(); _i++)
-			//	{
-			//		Node* _pNode = nullptr;
-			//		try
-			//		{
-			//			_pNode = new Node();
-			//		}
-			//		catch (...)
-			//		{
-			//			_pNode = nullptr;
-			//			throw "out of memory";
-			//		}
+				for (int _i = 0; _i < m_arrpTrees.GetSize(); _i++)
+				{
+					delete m_arrpTrees[_i];
+					m_arrpTrees[_i] = nullptr;
+				}
 
-			//		_pNode->m_pNode = _arrGraphNodes[_i];
-			//		if (_pNode->m_pNode == _pSourceNode)
-			//		{
-			//			_pTree = nullptr;
-			//			try
-			//			{
-			//				_pTree = new Tree();
-			//			}
-			//			catch (...)
-			//			{
-			//				_pTree = nullptr;
-			//				throw "out of memory";
-			//			}
+				m_arrpTrees.DeleteAll();
+				DataStruct::Array::DynArray<InnerTree::Pair> _arrPairs = m_nNodeMappingTree.GetArray();
+				for (int _i = 0; _i < _arrPairs.GetSize(); _i++)
+				{
+					_arrPairs[_i].m_nValue->SetTree(nullptr);
+					if (_arrPairs[_i].m_nKey == nSourceKey_)
+					{
+						Tree* _pTree = nullptr;
+						try
+						{
+							_pTree = new Tree();
+						}
+						catch (...)
+						{
+							_pTree = nullptr;
+							throw "out of memory";
+						}
 
-			//			_pNode->m_pTree = _pTree;
-			//			InnerGraph::Pair _nTempGraphPair = _pNode->m_pNode->GetPair();
-			//			_pTree->m_arrNodeKeys.Add(_nTempGraphPair.m_nKey);
-			//		}
+						_pTree->m_arrNodeKeys.Add(_arrPairs[_i].m_nKey);
+						_arrPairs[_i].m_nValue->SetTree(_pTree);
+						m_arrpTrees.Add(_pTree);
+					}
+				}
 
-			//		_arrNodes.Add(_pNode);
-			//		InnerTree::Pair _nPair;
-			//		InnerGraph::Pair _nGraphPair = _arrGraphNodes[_i]->GetPair();
-			//		_nPair.m_nKey = _nGraphPair.m_nKey;
-			//		_nPair.m_nValue = _pNode;
-			//		_nNodeMappingTree.Add(_nPair);
-			//	}
+				DataStruct::Array::DynArray<typename InnerGraph::Edge*> _arrEdges = m_nGraph.GetEdgesArray();
+				_arrEdges.Sort(
+					[](typename InnerGraph::Edge* pEdgeAddrA_, typename InnerGraph::Edge* pEdgeAddrB_)->int
+				{
+					double _nRet = (pEdgeAddrA_)->m_nWeight - (pEdgeAddrB_)->m_nWeight;
+					if (_nRet > 0.0)
+					{
+						return 1;
+					}
+					else if (_nRet < 0.0)
+					{
+						return -1;
+					}
+					else
+					{
+						return 0;
+					}
+				});
 
-			//	// 边按权重排序【边和其反向边只有一个被处理】
-			//	DataStruct::Array::DynArray<typename InnerGraph::Edge*> _arrEdges = m_nGraph.GetEdgesArray();
-			//	_arrEdges.Sort(
-			//		[](typename InnerGraph::Edge* pEdgeAddrA_, typename InnerGraph::Edge* pEdgeAddrB_)->int
-			//	{
-			//		double _nRet = (pEdgeAddrA_)->m_nWeight - (pEdgeAddrB_)->m_nWeight;
-			//		if (_nRet > 0.0)
-			//		{
-			//			return 1;
-			//		}
-			//		else if (_nRet < 0.0)
-			//		{
-			//			return -1;
-			//		}
-			//		else
-			//		{
-			//			return 0;
-			//		}
-			//	});
+				while (true)
+				{
+					bool _bNeedAgain = false;
+					for (int _i = 0; _i < _arrEdges.GetSize(); _i++)
+					{
+						InnerGraph::Edge* _pEdge = _arrEdges[_i];
+						InnerGraph::EdgeIdentity _nIdentity = _pEdge->GetIdentity();
+						Node* _pStartNode = nullptr;
+						Node* _pEndNode = nullptr;
+						m_nNodeMappingTree.Search(_nIdentity.m_nStartKey, _pStartNode);
+						if (_pStartNode == nullptr)
+						{
+							throw "node not exist";
+						}
 
-			//	// 循环不变式：
-			//	// _pTree始终是G的某最小生成树T的一个最小子生成树
+						m_nNodeMappingTree.Search(_nIdentity.m_nEndKey, _pEndNode);
+						if (_pEndNode == nullptr)
+						{
+							throw "node not exist";
+						}
 
-			//	// 初始时，
-			//	// _pTree仅包含一个节点，不包含边，满足循环不变式
+						if ((_pStartNode->m_pTree == nullptr
+							&& _pEndNode->m_pTree == m_arrpTrees[0]))
+						{
+							_pStartNode->SetTree(m_arrpTrees[0]);
+							m_arrpTrees[0]->m_arrNodeKeys.Add(_nIdentity.m_nStartKey);
+							m_arrpTrees[0]->m_arrEdgeKeys.Add(_nIdentity);
+							m_arrpTrees[0]->m_arrEdgeKeys.Add(_nIdentity.Reverse());
+							_bNeedAgain = true;
+						}
+						else if ((_pStartNode->m_pTree == m_arrpTrees[0]
+							&& _pEndNode->m_pTree == nullptr))
+						{
+							_pEndNode->SetTree(m_arrpTrees[0]);
+							m_arrpTrees[0]->m_arrNodeKeys.Add(_nIdentity.m_nEndKey);
+							m_arrpTrees[0]->m_arrEdgeKeys.Add(_nIdentity);
+							m_arrpTrees[0]->m_arrEdgeKeys.Add(_nIdentity.Reverse());
+							_bNeedAgain = true;
+						}
+					}
 
-			//	// 第k次迭代时，
-			//	// 前k-1次迭代后，循环不变式均满足
-			//	// 若edgek，中起始节点s,终止节点e均属于_pTree，本次不处理，循环不变式在迭代后依然成立
-			//	// 若edgek，中起始节点s,终止节点e均不属于_pTree，本次不处理，循环不变式在迭代后依然成立
-			//	// 若edgek，中起始节点s属于_pTree，终止节点e不属于_pTree
-			//	// 采用反证法证明T的边集合中必然包含(s,e)
-			//	// 对于此时_pTree中节点集合任意一点p
-			//	// T中存在p~e的一条路径
-			//	// 路径上必然存在一个边(x,e) 横跨  {此时_pTree中节点集合}，{e}两个节点集合
+					if (_bNeedAgain == false)
+					{
+						break;
+					}
+				}
+				
+				if (m_arrpTrees[0]->m_arrNodeKeys.GetSize() != m_nGraph.GetNodesArray().GetSize())
+				{
+					throw "min tree not exist";
+				}
 
-			//	// 依据最小生成树性质
-			//	// _pTree中边集合+(x,e) 是节点集合{此时_pTree中节点集合+e}的一颗最小生成树T'
-			//	// 考虑
-			//	// _pTree中边集合+edgek，首先是节点集合{此时_pTree中节点集合+e}的一颗生成树T''
-			//	// 又weight(edgek) < weight(x,e)，T'是最小生成树，故T''也是最小生成树
-
-			//	// 故迭代处理后，
-			//	// 得到的_pTree必然是某颗G最小生成树T的一个子生成树
-			//	// 得证
-
-			//	// 终止：
-			//	// G是连通图，故终止时，_pTree将是T
-			//	for (int _i = 0; _i < _arrEdges.GetSize(); _i++)
-			//	{
-			//		InnerGraph::Edge* _pEdge = _arrEdges[_i];
-			//		InnerGraph::EdgeIdentity _nIdentity = _pEdge->GetIdentity();
-			//		Node* _pStartNode = nullptr;
-			//		Node* _pEndNode = nullptr;
-			//		_nNodeMappingTree.Search(_nIdentity.m_nStartKey, _pStartNode);
-			//		_nNodeMappingTree.Search(_nIdentity.m_nEndKey, _pEndNode);
-			//		if ((_pStartNode->m_pTree == nullptr
-			//			&& _pEndNode->m_pTree == _pTree))
-			//		{
-			//			_pTree->m_arrNodeKeys.Add(_nIdentity.m_nStartKey);
-			//			_pTree->m_arrEdgeKeys.Add(_nIdentity);
-			//			_pTree->m_arrEdgeKeys.Add(_nIdentity.Reverse());
-			//		}
-			//		else if ((_pStartNode->m_pTree == _pTree
-			//			&& _pEndNode->m_pTree == nullptr))
-			//		{
-			//			_pTree->m_arrNodeKeys.Add(_nIdentity.m_nEndKey);
-			//			_pTree->m_arrEdgeKeys.Add(_nIdentity);
-			//			_pTree->m_arrEdgeKeys.Add(_nIdentity.Reverse());
-			//		}
-			//	}
-
-			//	for (int _i = 0; _i < _arrNodes.GetSize(); _i++)
-			//	{
-			//		delete _arrNodes[_i];
-			//		_arrNodes[_i] = nullptr;
-			//	}
-
-			//	return _pTree;
-			//}
+				return m_arrpTrees[0];
+			}
 		}
 	}
 }
