@@ -14,6 +14,9 @@
 #include <math.h>
 #include <vector>
 
+
+#include "External/Math/Math.h"
+#include "External/PlaneGeometry/PlaneGeometry.h"
 #ifdef ALGORITHMLIB
 #else
 #define ALGORITHMLIB __declspec(dllimport)
