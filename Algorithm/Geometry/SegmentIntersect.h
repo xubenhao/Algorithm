@@ -55,6 +55,7 @@ namespace AlLib
 				~SegmentIntersection();
 
 				static bool Run(const PlaneGeometry::LineGeometry& line1_, const PlaneGeometry::LineGeometry& line2_);
+				// 待实际验证
 				static bool Run(const DataStruct::Array::DynArray<PlaneGeometry::LineGeometry>& arrLines_);
 			};
 		}
