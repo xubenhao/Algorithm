@@ -14,9 +14,9 @@ namespace AlLib
 	{
 		namespace Array
 		{
-			// Í»ÆÆ¹Ì¶¨ÈİÁ¿Êı×éÏŞÖÆ
-			// ÈİÁ¿¿ÉÒÔ¶¯Ì¬Ôö¼ÓºÍ¼õÉÙµÄÊı×é
-			// ÊÊºÏ×÷Îª¹ÜÀí¶¯Ì¬ÔªËØ¼¯ºÏµÄÈİÆ÷
+			// çªç ´å›ºå®šå®¹é‡æ•°ç»„é™åˆ¶
+			// å®¹é‡å¯ä»¥åŠ¨æ€å¢åŠ å’Œå‡å°‘çš„æ•°ç»„
+			// é€‚åˆä½œä¸ºç®¡ç†åŠ¨æ€å…ƒç´ é›†åˆçš„å®¹å™¨
 			template<typename T>
 			class DynArray
 			{
@@ -79,7 +79,7 @@ namespace AlLib
 				void Shrink();
 
 			private:
-				T* m_pSource;// µ±TÎªÒıÓÃÀàĞÍÊ±£¬sizeofÎŞ·¨»ñµÃÆäÕæÊµ´óĞ¡
+				T* m_pSource;// å½“Tä¸ºå¼•ç”¨ç±»å‹æ—¶ï¼Œsizeofæ— æ³•è·å¾—å…¶çœŸå®å¤§å°
 				int m_nSize;
 				int m_nCapacity;
 
@@ -206,21 +206,11 @@ namespace AlLib
 					m_alloc.destroy(--_pEnd);
 				}
 
-				// ÄÚ´æÊÍ·Å
+				// å†…å­˜é‡Šæ”¾
 				m_alloc.deallocate(m_pSource, m_nCapacity);
 				m_pSource = nullptr;
 				m_nSize = 0;
 				m_nCapacity = 0;
-				m_pSource = m_alloc.allocate(100);
-				if (m_pSource == nullptr)
-				{
-					throw "out of memory";
-				}
-				else
-				{
-					m_nSize = 0;
-					m_nCapacity = 100;
-				}
 			}
 
 			template<typename T>
@@ -279,14 +269,14 @@ namespace AlLib
 
 				Check(m_nSize + 1);
 				m_alloc.construct(m_pSource + m_nSize, value_);
-				m_nSize++;
-
+				
 				for (int _i = m_nSize - 1; _i >= nIndex_; _i--)
 				{
 					*(m_pSource + _i + 1) = *(m_pSource + _i);
 				}
 
 				*(m_pSource + nIndex_) = value_;
+				m_nSize++;
 			}
 
 			template<typename T>
@@ -298,13 +288,13 @@ namespace AlLib
 					return;
 				}
 
-				// Ç°ÒÆ
+				// å‰ç§»
 				for (int _i = nIndex_ + 1; _i < m_nSize; _i++)
 				{
 					*(m_pSource + _i - 1) = *(m_pSource + _i);
 				}
 
-				m_alloc.destroy(m_pSource + m_nSize);
+				m_alloc.destroy(m_pSource + m_nSize - 1);
 				m_nSize--;
 				if (m_nSize <= m_nCapacity / 4)
 				{
