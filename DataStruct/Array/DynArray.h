@@ -8,6 +8,7 @@
 #include "..\..\stdafx.h"
 #include "..\..\Algorithm\Sort\Sort.h"
 
+// svn
 namespace AlLib
 {
 	namespace DataStruct
